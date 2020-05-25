@@ -8,21 +8,6 @@ const Ingredients = () => {
 
     const [ingredients, setIngredients] = useState([]);
 
-    useEffect(() =>{
-        fetch(process.env.REACT_APP_FIRE_API + 'ingredients.json')
-            .then(res => res.json())
-            .then(resData =>{
-                const loadedIngredient = [];
-            for (const key in resData){
-                loadedIngredient.push({
-                    id: key,
-                    title: resData[key].title,
-                    amount: resData[key].amount
-                });
-            }
-            setIngredients(loadedIngredient);
-        })
-    }, []);
 
     const filteredIngredientsHandler = useCallback(filteredIngredients => {
         setIngredients(filteredIngredients);
