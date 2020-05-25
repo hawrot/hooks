@@ -41,12 +41,12 @@ const Ingredients = () => {
 
     }
 
-    const loading = isLoading ? <LoadingIndicator/> : null;
+
 
     return (
         <div className="App">
-            {loading}
-            <IngredientForm onAddIngredient={addIngredientHandler}/>
+
+            <IngredientForm loading={isLoading} onAddIngredient={addIngredientHandler}/>
             <section>
                 <Search onLoadIngredients={filteredIngredientsHandler}/>
                 <IngredientList ingredients={ingredients} onRemoveItem={removeIngredientHandler}/>
