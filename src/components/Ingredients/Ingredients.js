@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import IngredientList from "./IngredientList";
 import IngredientForm from './IngredientForm';
 import Search from './Search';
@@ -24,7 +24,9 @@ const Ingredients = () => {
         })
     }, []);
 
-
+    const filteredIngredientsHandler = useCallback(filteredIngredients => {
+        setIngredients(filteredIngredients);
+    }, []);
 
     const addIngredientHandler = ingredient => {
         fetch(process.env.REACT_APP_FIRE_API + 'ingredients.json', {
@@ -49,7 +51,7 @@ const Ingredients = () => {
         <div className="App">
             <IngredientForm onAddIngredient={addIngredientHandler}/>
             <section>
-                <Search/>
+                <Search onLoadIngredients={filteredIngredientsHandler}/>
                 <IngredientList ingredients={ingredients} onRemoveItem={removeIngredientHandler}/>
             </section>
         </div>
