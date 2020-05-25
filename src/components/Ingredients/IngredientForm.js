@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Card from '../UI/Card';
 import './IngredientForm.css';
 
 const IngredientForm = React.memo(props => {
+
+  useState({
+    title: '',
+    amount: ''
+  });
+
   const submitHandler = event => {
     event.preventDefault();
     // ...
