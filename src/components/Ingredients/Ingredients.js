@@ -1,12 +1,30 @@
-import React, {useState} from 'react';
-
+import React, {useState, useEffect} from 'react';
+import IngredientList from "./IngredientList";
 import IngredientForm from './IngredientForm';
 import Search from './Search';
-import IngredientList from "./IngredientList";
+
 
 const Ingredients = () => {
 
     const [ingredients, setIngredients] = useState([]);
+
+    useEffect(() =>{
+        fetch(process.env.REACT_APP_FIRE_API + 'ingredients.json')
+            .then(res => res.json())
+            .then(resData =>{
+                const loadedIngredient = [];
+            for (const key in resData){
+                loadedIngredient.push({
+                    id: key,
+                    title: resData[key].title,
+                    amount: resData[key].amount
+                });
+            }
+            setIngredients(loadedIngredient);
+        })
+    }, []);
+
+
 
     const addIngredientHandler = ingredient => {
         fetch(process.env.REACT_APP_FIRE_API + 'ingredients.json', {
