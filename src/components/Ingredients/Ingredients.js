@@ -33,9 +33,11 @@ const Ingredients = () => {
     }
 
     const removeIngredientHandler = ingredientId => {
+        setIsLoading(true);
         fetch(process.env.REACT_APP_FIRE_API + `ingredients/${ingredientId}.json`, {
             method: 'DELETE'
         }).then(res => {
+            setIsLoading(false);
             setIngredients(prevIngredients => prevIngredients.filter((ingredient) => ingredient.id !== ingredientId));
         })
 
