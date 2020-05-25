@@ -9,7 +9,7 @@ const Search = React.memo(props => {
     const [enteredFilter, setEnteredFilter] = useState('');
 
     useEffect(() => {
-        setTimeout(() => {
+        const timer =  setTimeout(() => {
             if (enteredFilter === inputRef.current.value) {
                 const query = enteredFilter.length === 0 ? '' : `?orderBy="title"&equalTo="${enteredFilter}"`;
                 fetch(process.env.REACT_APP_FIRE_API + 'ingredients.json' + query)
@@ -27,6 +27,7 @@ const Search = React.memo(props => {
                     })
             }
         }, 500);
+        return () => {clearTimeout(timer)};
     }, [enteredFilter, onLoadIngredients, inputRef]);
 
     return (
