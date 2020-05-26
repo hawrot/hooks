@@ -6,70 +6,87 @@ import ErrorModal from "../UI/ErrorModal";
 
 const ingredientReducer = (currentIngredients, action) => {
     switch (action.type) {
-        case 'SET' : return action.ingredients;
-        case 'ADD' : return [...currentIngredients, action.ingredient];
-        case 'DELETE' : return currentIngredients.filter(ing => ing.id !== action.id);
+        case 'SET' :
+            return action.ingredients;
+        case 'ADD' :
+            return [...currentIngredients, action.ingredient];
+        case 'DELETE' :
+            return currentIngredients.filter(ing => ing.id !== action.id);
         default:
             throw new Error('An error occurred')
 
     }
 }
 
-const Ingredients = () => {
-     const [ingredients, dispatch ] = useReducer(ingredientReducer, []);
+const httpReducer = (httpState, action) => {
+    switch (action.type) {
+        case 'SEND':
+            return {loading: true, error: null};
+        case 'RESPONSE':
+            return {...httpState, loading: false};
+        case 'ERROR':
+            return {loading: false, error: action.error};
+        case 'CLEAR':
+            return {...httpState, error: null};
+        default:
+            throw new Error('Should not be reached')
+    }
+}
 
-   // const [ingredients, setIngredients] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
+const Ingredients = () => {
+    const [ingredients, dispatch] = useReducer(ingredientReducer, []);
+    const [httpState, dispatchHttp] = useReducer(httpReducer, {loading: false, error: null});
+
+    // const [ingredients, setIngredients] = useState([]);
+    // const [isLoading, setIsLoading] = useState(false);
+    // const [error, setError] = useState('');
 
 
     const filteredIngredientsHandler = useCallback(filteredIngredients => {
-       // setIngredients(filteredIngredients);
+        // setIngredients(filteredIngredients);
         dispatch({type: 'SET', ingredients: filteredIngredients})
     }, []);
 
     const addIngredientHandler = ingredient => {
-        setIsLoading(true);
+        dispatchHttp({type: 'SEND'})
         fetch(process.env.REACT_APP_FIRE_API + 'ingredients.json', {
             method: 'POST',
             body: JSON.stringify(ingredient),
             headers: {'Content-Type': 'application/json'}
         }).then(res => {
-            setIsLoading(false);
+            dispatchHttp({type: 'RESPONSE'});
             return res.json();
 
         }).then(resData => {
-           //setIngredients(prevIngredients => [...prevIngredients, {id: resData.name, ...ingredient}])
-            dispatch({type: 'ADD', ingredient: {id: resData.name, ...ingredient} })
+            //setIngredients(prevIngredients => [...prevIngredients, {id: resData.name, ...ingredient}])
+            dispatch({type: 'ADD', ingredient: {id: resData.name, ...ingredient}})
         });
 
     }
 
     const removeIngredientHandler = ingredientId => {
-        setIsLoading(true);
+        dispatchHttp({type: 'SEND'})
         fetch(process.env.REACT_APP_FIRE_API + `ingredients/${ingredientId}.json`, {
             method: 'DELETE'
         }).then(res => {
-            setIsLoading(false);
+            dispatchHttp({type: 'RESPONSE'})
             dispatch({type: 'DELETE', id: ingredientId})
-           // setIngredients(prevIngredients => prevIngredients.filter((ingredient) => ingredient.id !== ingredientId));
+            // setIngredients(prevIngredients => prevIngredients.filter((ingredient) => ingredient.id !== ingredientId));
         }).catch(err => {
-            setError(err.message);
-            setIsLoading(false);
+            dispatchHttp({type: 'ERROR', error: err.message})
         })
 
     }
 
     const clearError = () => {
-        setError(null);
+        dispatchHttp({type: 'CLEAR'})
     }
-
 
 
     return (
         <div className="App">
-            {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
-            <IngredientForm loading={isLoading} onAddIngredient={addIngredientHandler}/>
+            {httpState.error && <ErrorModal onClose={clearError}>{httpState.error}</ErrorModal>}
+            <IngredientForm loading={httpState.loading} onAddIngredient={addIngredientHandler}/>
             <section>
                 <Search onLoadIngredients={filteredIngredientsHandler}/>
                 <IngredientList ingredients={ingredients} onRemoveItem={removeIngredientHandler}/>
