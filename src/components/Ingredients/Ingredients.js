@@ -64,7 +64,7 @@ const Ingredients = () => {
 
     }, [])
 
-    const removeIngredientHandler = ingredientId => {
+    const removeIngredientHandler = useCallback(ingredientId => {
         dispatchHttp({type: 'SEND'})
         fetch(process.env.REACT_APP_FIRE_API + `ingredients/${ingredientId}.json`, {
             method: 'DELETE'
@@ -76,7 +76,7 @@ const Ingredients = () => {
             dispatchHttp({type: 'ERROR', error: err.message})
         })
 
-    }
+    }, []);
 
     const clearError = () => {
         dispatchHttp({type: 'CLEAR'})
