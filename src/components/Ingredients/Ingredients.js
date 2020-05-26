@@ -47,7 +47,7 @@ const Ingredients = () => {
         dispatch({type: 'SET', ingredients: filteredIngredients})
     }, []);
 
-    const addIngredientHandler = ingredient => {
+    const addIngredientHandler = useCallback(ingredient => {
         dispatchHttp({type: 'SEND'})
         fetch(process.env.REACT_APP_FIRE_API + 'ingredients.json', {
             method: 'POST',
@@ -62,7 +62,7 @@ const Ingredients = () => {
             dispatch({type: 'ADD', ingredient: {id: resData.name, ...ingredient}})
         });
 
-    }
+    }, [])
 
     const removeIngredientHandler = ingredientId => {
         dispatchHttp({type: 'SEND'})
