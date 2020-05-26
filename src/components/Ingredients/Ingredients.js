@@ -19,19 +19,14 @@ const ingredientReducer = (currentIngredients, action) => {
     }
 }
 
-
 const Ingredients = () => {
     const [ingredients, dispatch] = useReducer(ingredientReducer, []);
     const {isLoading, error, data, sendRequest, reqExtra, reqIdentifier} = useHttp();
 
-    // const [ingredients, setIngredients] = useState([]);
-    // const [isLoading, setIsLoading] = useState(false);
-    // const [error, setError] = useState('');
-
     useEffect(() => {
-        if( !isLoading && !error && reqIdentifier === 'REMOVE'){
+        if (!isLoading && !error && reqIdentifier === 'REMOVE') {
             dispatch({type: 'DELETE', id: reqExtra})
-        }else if (!isLoading && !error && reqIdentifier === 'ADD_INGREDIENT'){
+        } else if (!isLoading && !error && reqIdentifier === 'ADD_INGREDIENT') {
             dispatch({type: 'ADD', ingredient: {id: data.name, ...reqExtra}})
         }
 
@@ -39,27 +34,15 @@ const Ingredients = () => {
 
 
     const filteredIngredientsHandler = useCallback(filteredIngredients => {
-        // setIngredients(filteredIngredients);
+
         dispatch({type: 'SET', ingredients: filteredIngredients})
     }, []);
 
     const addIngredientHandler = useCallback(ingredient => {
-        /*dispatchHttp({type: 'SEND'})
-        fetch(process.env.REACT_APP_FIRE_API + 'ingredients.json', {
-            method: 'POST',
-            body: JSON.stringify(ingredient),
-            headers: {'Content-Type': 'application/json'}
-        }).then(res => {
-            dispatchHttp({type: 'RESPONSE'});
-            return res.json();
 
-        }).then(resData => {
-            //setIngredients(prevIngredients => [...prevIngredients, {id: resData.name, ...ingredient}])
-            dispatch({type: 'ADD', ingredient: {id: resData.name, ...ingredient}})
-        });*/
         sendRequest(process.env.REACT_APP_FIRE_API + 'ingredients.json', 'POST', JSON.stringify(ingredient), ingredient, 'ADD_INGREDIENT');
 
-    }, [])
+    }, [sendRequest])
 
     const removeIngredientHandler = useCallback(ingredientId => {
         sendRequest(process.env.REACT_APP_FIRE_API + `ingredients/${ingredientId}.json`, 'DELETE', null, ingredientId, 'REMOVE');
@@ -67,7 +50,7 @@ const Ingredients = () => {
     }, [sendRequest]);
 
     const clearError = useCallback(() => {
-       // dispatchHttp({type: 'CLEAR'})
+
     }, [])
     const ingredientList = useMemo(() => {
         return (
