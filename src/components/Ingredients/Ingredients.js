@@ -18,24 +18,11 @@ const ingredientReducer = (currentIngredients, action) => {
     }
 }
 
-const httpReducer = (httpState, action) => {
-    switch (action.type) {
-        case 'SEND':
-            return {loading: true, error: null};
-        case 'RESPONSE':
-            return {...httpState, loading: false};
-        case 'ERROR':
-            return {loading: false, error: action.error};
-        case 'CLEAR':
-            return {...httpState, error: null};
-        default:
-            throw new Error('Should not be reached')
-    }
-}
+
 
 const Ingredients = () => {
     const [ingredients, dispatch] = useReducer(ingredientReducer, []);
-    const [httpState, dispatchHttp] = useReducer(httpReducer, {loading: false, error: null});
+
 
     // const [ingredients, setIngredients] = useState([]);
     // const [isLoading, setIsLoading] = useState(false);
@@ -66,15 +53,7 @@ const Ingredients = () => {
 
     const removeIngredientHandler = useCallback(ingredientId => {
         dispatchHttp({type: 'SEND'})
-        fetch(process.env.REACT_APP_FIRE_API + `ingredients/${ingredientId}.json`, {
-            method: 'DELETE'
-        }).then(res => {
-            dispatchHttp({type: 'RESPONSE'})
-            dispatch({type: 'DELETE', id: ingredientId})
-            // setIngredients(prevIngredients => prevIngredients.filter((ingredient) => ingredient.id !== ingredientId));
-        }).catch(err => {
-            dispatchHttp({type: 'ERROR', error: err.message})
-        })
+
 
     }, []);
 
