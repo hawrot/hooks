@@ -3,6 +3,7 @@ import IngredientList from "./IngredientList";
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import ErrorModal from "../UI/ErrorModal";
+import useHttp from "../../hooks/http";
 
 const ingredientReducer = (currentIngredients, action) => {
     switch (action.type) {
@@ -22,6 +23,7 @@ const ingredientReducer = (currentIngredients, action) => {
 
 const Ingredients = () => {
     const [ingredients, dispatch] = useReducer(ingredientReducer, []);
+    useHttp();
 
 
     // const [ingredients, setIngredients] = useState([]);
@@ -52,7 +54,6 @@ const Ingredients = () => {
     }, [])
 
     const removeIngredientHandler = useCallback(ingredientId => {
-        dispatchHttp({type: 'SEND'})
 
 
     }, []);
