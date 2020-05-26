@@ -1,4 +1,4 @@
-import React, {useReducer, useState, useEffect, useCallback} from 'react';
+import React, {useReducer, useState, useEffect, useCallback, useMemo} from 'react';
 import IngredientList from "./IngredientList";
 import IngredientForm from './IngredientForm';
 import Search from './Search';
@@ -81,7 +81,11 @@ const Ingredients = () => {
     const clearError = () => {
         dispatchHttp({type: 'CLEAR'})
     }
-
+    const ingredientList = useMemo(() => {
+            return (
+                <IngredientList ingredients={ingredients} onRemoveItem={removeIngredientHandler}/>
+            )
+        }, [ingredients, removeIngredientHandler]);
 
     return (
         <div className="App">
@@ -89,7 +93,7 @@ const Ingredients = () => {
             <IngredientForm loading={httpState.loading} onAddIngredient={addIngredientHandler}/>
             <section>
                 <Search onLoadIngredients={filteredIngredientsHandler}/>
-                <IngredientList ingredients={ingredients} onRemoveItem={removeIngredientHandler}/>
+                {ingredientList}
             </section>
         </div>
     );
