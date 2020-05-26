@@ -3,9 +3,9 @@ import {useReducer, useCallback} from 'react';
 const httpReducer = (httpState, action) => {
     switch (action.type) {
         case 'SEND':
-            return {loading: true, error: null};
+            return {loading: true, error: null, extra: null, identifier: action.identifier};
         case 'RESPONSE':
-            return {...httpState, loading: false, data: action.resData};
+            return {...httpState, loading: false, data: action.resData, extra: action.extra};
         case 'ERROR':
             return {loading: false, error: action.error};
         case 'CLEAR':
@@ -19,11 +19,13 @@ const useHttp = () => {
     const [httpState, dispatchHttp] = useReducer(httpReducer, {
         loading: false,
         error: null,
-        data: null
+        data: null,
+        extra : null,
+        identifier: null
     });
 
-    const sendRequest = useCallback( (url, method, body) => {
-        dispatchHttp({type: 'SEND'});
+    const sendRequest = useCallback( (url, method, body, reqExtra, reqIdentifier) => {
+        dispatchHttp({type: 'SEND', identifier: reqIdentifier });
 
         fetch(url, {
             method: method,
@@ -34,7 +36,7 @@ const useHttp = () => {
         }).then(res => {
             return res.json();
         }).then(resData => {
-            dispatchHttp({type: 'RESPONSE', resData: resData})
+            dispatchHttp({type: 'RESPONSE', resData: resData, extra: reqExtra})
         })
             .catch(err => {
             dispatchHttp({type: 'ERROR', error: err.message})
@@ -45,7 +47,9 @@ const useHttp = () => {
         isLoading: httpState.loading,
         error: httpState.error,
         data: httpState.data,
-        sendRequest: sendRequest
+        sendRequest: sendRequest,
+        reqExtra : httpState.extra,
+        reqIdentifier: httpState.identifier
     };
 
 };
